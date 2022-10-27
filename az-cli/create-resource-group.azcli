@@ -1,0 +1,7 @@
+resourceGroupResourceId=$(az group create --name ToyWebsite --location westus --query id --output tsv)
+
+az ad sp create --id $applicationRegistrationObjectId
+az role assignment create \
+    --assignee $applicationRegistrationAppId \
+    --role Contributor \
+    --scope $resourceGroupResourceId
