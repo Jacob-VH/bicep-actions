@@ -1,0 +1,12 @@
+myApiName=jake-apim-test
+myLocation=westus
+myEmail=vanhyningj@outlook.com
+
+az group create --name $myApiName --location $myLocation
+
+az apim create -n $myApiName \
+    --location $myLocation \
+    --publisher-email $myEmail  \
+    --resource-group $myApiName \
+    --publisher-name Jake-APIM-Test \
+    --sku-name Consumption
