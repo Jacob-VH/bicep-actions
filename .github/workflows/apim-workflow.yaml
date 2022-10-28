@@ -1,6 +1,6 @@
 name: deploy-apim
 
-on: [workflow-dispatch]
+on: [workflow_dispatch]
 
 permissions:
   id-token: write
