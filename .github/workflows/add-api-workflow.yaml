@@ -5,7 +5,7 @@ on:
     branches:
       - "main"
     paths:
-      - "/apis/sample-api.json"
+      - "apis/sample-api.json"
 
 permissions:
   id-token: write
