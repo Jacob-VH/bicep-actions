@@ -8,7 +8,7 @@
       "/WeatherForecast": {
         "get": {
           "tags": [
-            "WeatherForecast"
+            "Change"
           ],
           "operationId": "GetWeatherForecast",
           "responses": {
