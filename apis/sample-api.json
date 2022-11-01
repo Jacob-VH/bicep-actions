@@ -3,7 +3,7 @@
     "info": {
         "title": "Demo Conference API",
         "description": "A sample API with information related to a technical conference.  The available resources  include *Speakers*, *Sessions* and *Topics*.  A single write operation is available to provide  feedback on a session.",
-        "version": "2.0.0"
+        "version": "2.0.1"
     },
     "host": "conferenceapi.azurewebsites.net",
     "schemes": [
