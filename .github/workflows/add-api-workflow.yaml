@@ -28,4 +28,4 @@ jobs:
       with:
         azcliversion: 2.40.0
         inlinescript: |
-          az apim api import -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --service-name jake-test-apim --path test-api --api-id e842634cc9c7475cbb9f6eecc6a481b2 --specification-url "https://raw.githubusercontent.com/Jacob-VH/bicep-actions/main/apis/sample-api.json" --specification-format OpenApiJson
+          az apim api import -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --service-name jake-test-apim --path test-api --api-id e842634cc9c7475cbb9f6eecc6a481b2 --specification-url "https://function-with-swagger20221101164153.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
