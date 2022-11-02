@@ -12,6 +12,11 @@ env:
   AZURE_FUNCTIONAPP_NAME: 'function-with-swagger20221101164153'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './apis'
   DOTNET_VERSION: '6.0.x'
+  AZURE_RESOURCEGROUP_NAME: apim-test
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-deploy:
