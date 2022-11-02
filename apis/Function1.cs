@@ -40,7 +40,7 @@ namespace TurbineRepair
             // Return bad request if capacity or hours are not passed in
             if (capacity == null || hours == null)
             {
-                return new BadRequestObjectResult("Please pass capacity and hours in the request body");
+                return new BadRequestObjectResult("Please pass a capacity and hours in the request body");
             }
             // Formulas to calculate revenue and cost
             double? revenueOpportunity = capacity * revenuePerkW * 24;
