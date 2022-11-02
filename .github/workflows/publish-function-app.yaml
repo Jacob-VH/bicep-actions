@@ -39,3 +39,18 @@ jobs:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+  deploy-apim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: azure/CLI@v1
+        with:
+          azcliversion: 2.40.0
+          inlinescript: |
+            az apim api import -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --service-name jake-test-apim --path test-api --api-id e842634cc9c7475cbb9f6eecc6a481b2 --specification-url "https://function-with-swagger20221101164153.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
+          
