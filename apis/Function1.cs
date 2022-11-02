@@ -24,9 +24,9 @@ namespace TurbineRepair
         [OpenApiOperation(operationId: "Run")]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         [OpenApiRequestBody("application/json", typeof(RequestBodyModel),
-            Description = "JSON request body containing { hours, capacity}")]
+            Description = "JSON TEST request body containing { hours, capacity}")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(string),
-            Description = "The OK response message containing a JSON result.")]
+            Description = "The TEST OK response message containing a JSON result.")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
