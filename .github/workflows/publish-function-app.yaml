@@ -46,6 +46,7 @@ jobs:
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
 
   deploy-apim:
+    needs: [build-and-deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: azure/login@v1
