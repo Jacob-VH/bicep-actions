@@ -21,13 +21,13 @@ namespace TurbineRepair
         const double turbineCost = 100;
 
         [FunctionName("TurbineRepair")]
-        [OpenApiOperation(operationId: "Run")]
+        [OpenApiOperation(operationId: "Running")]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         [OpenApiRequestBody("application/json", typeof(RequestBodyModel),
             Description = "JSON TESTING request body containing { hours, capacity}")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(string),
             Description = "The TESTING OK response message containing a JSON result.")]
-        public static async Task<IActionResult> Run(
+        public static async Task<IActionResult> Running(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
