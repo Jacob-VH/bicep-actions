@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "function_with_swagger": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7192",
+      "launchBrowser": false
+    }
+  }
+}
