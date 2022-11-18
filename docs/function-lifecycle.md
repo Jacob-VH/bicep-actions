@@ -16,7 +16,7 @@ Bicep templates will be stored in the repo. These templates will be used as the 
 
 ### Creating/Updating a function
 
-This workflow will take the source code for a function, build it, deploy it, and update APIM in the specified environment. If necessary a new resource group, ASP, and storage account will be created to house the function. All Azure resource names will be consitently generated based off a combination of the function name and environment.
+This workflow will take the source code for a function, build it, deploy it, and update APIM in the specified environment. If necessary a new resource group, ASP, and storage account will be created to house the function. All Azure resource names will be consistently generated based off a combination of the function name and environment. The resources will be created from the base infrastructure bicep templates.
 
 Inputs:
 - Function source code location
@@ -43,33 +43,32 @@ Steps:
 
 ![Function App](./function-app.png)
 
+### Deleting a function
 
-Base Bicep for ASP
-- name ($resourcename-ASP-$env)
-- sku: standard
-- location: centralus
+This workflow will use a series of az cli commands to remove all the associated Azure resources as well as the API from APIM.
 
-Base Bicep for storage account
-- name
-- tier
-- location
+Inputs:
+- Function source code location
+- Environment
 
+Variables:
+- Subscription ID
+- Resource group
+- APIM
+- Function app name
+- Storage account name
+- ASP name
 
-deploy:
-- rg
-- grab base bicep for storage account
-    - input variables
-    - deploy to rg in specified env
-- grab base bicep for ASP
-    - input variables
-    - deploy to rg in specified env
+Steps:
+1. Get environment input
+2. Get source code location
+3. Get Azure resource group name (generated from function source code and environment. ex. 'ticketing-app-rg')
+4. Check if resource group exists
+    - True: Continue
+    - False: Exit
+5. Delete RG
+6. Check if API exists in APIM
+    - True: Continue
+    - False: Exit
+7. Remove API from APIM
 
-apim:
-- source is the bicep template
-
-steps:
-- update template
-- grab env
-- deploy to specified env
-
-Microphone stoped working, one sec
