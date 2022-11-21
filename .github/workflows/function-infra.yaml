@@ -2,10 +2,13 @@ name: FunctionInfra
 
 on: [workflow_dispatch]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: windows-latest
-    environment: dev
     steps:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
