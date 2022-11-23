@@ -1,14 +1,18 @@
 targetScope = 'subscription'
 
 param location string = 'westus'
-param name string = 'function-b'
+param rgname string = 'function-a-rg'
+param functionName string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: 'function-b-rg'
+  name: rgname
   location: location
 }
 
 module functionApp 'function.bicep' = {
-  name: 'asp'
+  name: functionName
   scope: resourceGroup
+  params: {
+    appName: functionName
+  }
 }
