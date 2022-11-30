@@ -1,7 +1,7 @@
 targetScope = 'subscription'
 
 param location string = 'westus'
-param rgname string = 'function-a-rg'
+param rgname string = 'function-b-rg'
 param functionName string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
