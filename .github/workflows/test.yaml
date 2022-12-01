@@ -26,7 +26,7 @@ jobs:
           script: |
             const { env } = ${{ inputs.env }}
             const { function_name } = ${{ inputs.function-name }}
-            if (env === 'sandbox'){
+            if (inputs.env === 'sandbox'){
               console.log('going to the sandbox')
             }
             else {
