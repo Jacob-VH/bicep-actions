@@ -2,16 +2,33 @@ name: test
 on:
   workflow_dispatch:
     inputs:
-      username:
-        description: 'A username passed from the caller workflow'
-        default: 'john-doe'
+      env:
+        description: 'Target environment'
+        default: 'sandbox'
+        required: true
+        type: string
+
+      function-name:
+        description: 'name of the function'
+        default: 'function.a'
         required: true
         type: string
 
 jobs:
-  print-username:
-    runs-on: ubuntu-latest
 
+  calculate-variables:
+    runs-on: ubuntu-latest
     steps:
-      - name: Print the input name to STDOUT
-        run: echo The username is ${{ inputs.username }}
+      - name: Calculate variables
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            const { env } = inputs.env
+            const { function_name } = inputs.function-name
+            if (env == 'sandbox'){
+              console.log('going to the sandbox')
+            }
+            else {
+              console.log('not going to sandbox')
+            }
