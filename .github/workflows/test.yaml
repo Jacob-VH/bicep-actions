@@ -24,7 +24,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const { env } = ${{ inputs.env }}
+            var { env } = ${{ inputs.env }}
             console.log(env)
             const { function_name } = ${{ inputs.function-name }}
             if (env === 'sandbox'){
@@ -33,11 +33,3 @@ jobs:
             else {
               console.log('not going to sandbox')
             }
-
-
-  print-variables:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Print the input name to STDOUT
-        run: echo The username is ${{ inputs.username }}
