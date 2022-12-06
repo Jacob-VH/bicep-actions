@@ -22,7 +22,7 @@ jobs:
 
       - name: 'Variables'
         run: |
-          resourceGroup="${{ inpusts.functionName }}-rg"
+          resourceGroup="${{ inputs.functionName }}-rg"
 
       - name: 'Az Login'
         uses: azure/login@v1
