@@ -19,17 +19,7 @@ jobs:
   calculate-variables:
     runs-on: ubuntu-latest
     steps:
-      - name: Calculate variables
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: |
-            var { env } = ${{ inputs.env }}
-            console.log(env)
-            const { function_name } = ${{ inputs.function-name }}
-            if (env === 'sandbox'){
-              console.log('going to the sandbox')
-            }
-            else {
-              console.log('not going to sandbox')
-            }
+      - name: variables
+        run: |
+          resourceGroup = inputs.env
+          echo $resourceGroup
