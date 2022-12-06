@@ -22,4 +22,4 @@ jobs:
       - name: variables
         run: |
           resourceGroup = "${{ inputs.env }}"
-          echo $resourceGroup
+          echo resourceGroup
