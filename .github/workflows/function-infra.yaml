@@ -20,6 +20,10 @@ jobs:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
 
+      - name: 'Variables'
+        run: |
+          resourceGroup="${{ inpusts.functionName }}-rg"
+
       - name: 'Az Login'
         uses: azure/login@v1
         with:
@@ -32,4 +36,4 @@ jobs:
         with:
           azcliversion: 2.40.0
           inlineScript: |
-            az deployment sub create --location westus --template-file ./deploy/function-app-infra.bicep --parameters functionName=${{inputs.functionName}}
+            az deployment sub create --location westus --template-file ./deploy/function-app-infra.bicep --parameters functionName=${{inputs.functionName}} rgname=$resourceGroup
