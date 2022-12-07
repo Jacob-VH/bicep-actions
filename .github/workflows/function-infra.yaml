@@ -9,6 +9,12 @@ on:
         required: true
         type: string
 
+      env:
+        description: 'Target environment'
+        default: 'sandbox'
+        required: true
+        type: string
+
 permissions:
   id-token: write
   contents: read
@@ -32,5 +38,4 @@ jobs:
         with:
           azcliversion: 2.40.0
           inlineScript: |
-            resourceGroup="${{ inputs.functionName }}-rg"
-            az deployment sub create --location westus --template-file ./deploy/function-app-infra.bicep --parameters functionName=${{inputs.functionName}} rgname=$resourceGroup
+            az deployment sub create --location westus --template-file ./deploy/function-app-infra.bicep --parameters functionName=${{inputs.functionName}} env=${{inputs.env}}

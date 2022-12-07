@@ -2,6 +2,9 @@
 @description('The name of the function app that you wish to create.')
 param appName string
 
+@description('Environment being deployed to.')
+param env string
+
 @description('Storage Account type')
 @allowed([
   'Standard_LRS'
@@ -21,9 +24,9 @@ param location string = resourceGroup().location
 ])
 param runtime string = 'dotnet'
 
-var functionAppName = appName
-var hostingPlanName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var functionAppName = 'func-${appName}'
+var hostingPlanName = 'ASP-${appName}'
+var storageAccountName = 'st${appName}${env}'
 var functionWorkerRuntime = runtime
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
