@@ -26,7 +26,7 @@ param runtime string = 'dotnet'
 
 var functionAppName = 'func-${appName}'
 var hostingPlanName = 'ASP-${appName}'
-var storageAccountName = 'st${appName}${env}'
+var storageAccountName = 'st${toLower(appName)}${env}'
 var functionWorkerRuntime = runtime
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
