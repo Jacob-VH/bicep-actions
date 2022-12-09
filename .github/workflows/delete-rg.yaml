@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'SN.System.Org.IS.DevOps.Ticketing.Functions' # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
+jobs:
+  check-and-delete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v2
+      
+      - name: 'azure login'
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      
+      - name: 'resource group list'
+        uses: azure/CLI
+        with:
+          azcliversion: 2.40.0
+          inlineScript: az group list
+      
+      - name: 'check and delete'
+        uses: if [ $(az group exists --name $RESOURCEGROUPNAME) = true ]; then
+                  az group delete --name $RESOURCEGROUPNAME --location $LOCATION
+              fi
+      
+      - name: 'resource group list'
+        uses: az group list
