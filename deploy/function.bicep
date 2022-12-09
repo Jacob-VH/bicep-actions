@@ -14,7 +14,7 @@ param env string
 param storageAccountType string = 'Standard_LRS'
 
 @description('Location for all resources.')
-param location string = resourceGroup().location
+param location string
 
 @description('The language worker runtime to load in the function app.')
 @allowed([

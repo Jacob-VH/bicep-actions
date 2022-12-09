@@ -15,5 +15,6 @@ module functionApp 'function.bicep' = {
   params: {
     appName: functionName
     env: env
+    location: location
   }
 }
