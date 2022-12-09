@@ -38,5 +38,6 @@ jobs:
         with:
           deploymentName: ${{ github.run_number }}
           scope: subscription
+          region: westus
           template: ./deploy/function-app-infra.bicep
           parameters: functionName=${{inputs.functionName}} env=${{inputs.env}}
