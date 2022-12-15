@@ -28,6 +28,8 @@ env:
 jobs:
   env-deploy:
     runs-on: ubuntu-latest
+    outputs:
+      publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
     steps:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
@@ -72,7 +74,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: echo-profile
-      run: echo "${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}"
+      run: echo "${{ needs.env-deploy.outputs.publish-profile }}"
 
     - name: 'Resolve Project Dependencies Using Dotnet'
       shell: pwsh
@@ -88,7 +90,7 @@ jobs:
       with:
         app-name: ${{ env.FUNCTIONAPP_NAME }}
         package: '${{ env.FUNCTIONAPP_PATH }}/output'
-        publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
+        publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   # update-apim:
   #   runs-on: ubuntu-latest
