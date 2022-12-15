@@ -1,11 +1,7 @@
-name: add-api
+name: get-publish-profile
 
 on:
-  push:
-    branches:
-      - "main"
-    paths:
-      - "apis/sample-api.json"
+  [workflow_dispatch]
 
 permissions:
   id-token: write
@@ -13,6 +9,7 @@ permissions:
 
 env:
   AZURE_RESOURCEGROUP_NAME: apim-test
+  PUBLISH_PROFILE: string
 
 jobs:
   deploy:
@@ -28,4 +25,5 @@ jobs:
       with:
         azcliversion: 2.40.0
         inlinescript: |
-          az apim api import -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --service-name jake-test-apim --path test-api --api-id e842634cc9c7475cbb9f6eecc6a481b2 --specification-url "https://function-with-swagger20221101164153.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
+          ${{env.PUBLISH_PROFILE}}=az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test
+          echo ${{env.PUBLISH_PROFILE}}

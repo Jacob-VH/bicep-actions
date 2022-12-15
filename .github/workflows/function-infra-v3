@@ -1,0 +1,95 @@
+name: FunctionInfra-V3
+
+on:
+  workflow_dispatch:
+    inputs:
+      functionName:
+        description: 'name of function'
+        default: 'function name'
+        required: true
+        type: string
+
+      env:
+        description: 'Target environment'
+        default: 'sandbox'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  FUNCTIONAPP_NAME: func-${{ inputs.functionName }}
+  FUNCTIONAPP_PATH: './apis' ##Change this to ./${{inputs.functionName}}
+  DOTNET_VERSION: '6.0.x'
+  RG_NAME: rg-${{ inputs.functionName }}-cus
+
+jobs:
+  env-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub'
+        uses: actions/checkout@v3
+
+      - name: 'Az Login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Resource Check'
+        uses:
+          
+      - name: 'Deploy Infra'
+        uses: azure/arm-deploy@v1
+        with:
+          deploymentName: ${{ github.run_number }}
+          scope: subscription
+          region: westus
+          template: ./deploy/function-app-infra.bicep
+          parameters: functionName=${{inputs.functionName}} env=${{inputs.env}}
+
+  app-build-and-deploy:
+    runs-on: windows-latest
+    environment: dev
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: pwsh
+      run: |
+        pushd './${{ env.FUNCTIONAPP_PATH }}'
+        dotnet build --configuration Release --output ./output
+        popd
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.FUNCTIONAPP_NAME }}
+        package: '${{ env.FUNCTIONAPP_PATH }}/output'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+  update-apim:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Az Login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: 'Update APIM'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.40.0
+          inlinescript: |
+            az apim api import -g ${{ env.RG_NAME }} --service-name jake-test-apim --path ${{inputs.functionName}} --api-id e842634cc9c7475cbb9f6eecc6a481b2 \
+            --specification-url "https://${{env.FUNCTIONAPP_NAME}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
