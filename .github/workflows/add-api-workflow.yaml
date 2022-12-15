@@ -24,8 +24,8 @@ jobs:
       with:
         azcliversion: 2.40.0
         inlinescript: |
-          echo 'PUBLISH_PROFILE' >> $GITHUB_ENV
-          az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test >> $GITHUB_ENV
+          echo 'PUBLISH_PROFILE' >> $env:GITHUB_ENV
+          az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test >> $env:GITHUB_ENV
           echo ${{env.PUBLISH_PROFILE}}
     
     # - name: variables
