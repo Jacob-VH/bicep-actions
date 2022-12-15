@@ -51,7 +51,14 @@ jobs:
           template: ./deploy/function-app-infra.bicep
           parameters: functionName=${{inputs.functionName}} env=${{inputs.env}}
 
+      - name: publish-profile
+        run: |
+          echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_ENV
+          az functionapp deployment list-publishing-profiles --name ${{ env.FUNCTIONAPP_NAME }} --resource-group ${{ env.RG_NAME }} >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
   app-build-and-deploy:
+    needs: env-deploy
     runs-on: windows-latest
     environment: dev
     steps:
@@ -75,21 +82,21 @@ jobs:
       with:
         app-name: ${{ env.FUNCTIONAPP_NAME }}
         package: '${{ env.FUNCTIONAPP_PATH }}/output'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        publish-profile: ${{ env.PUBLISH_PROFILE }}
 
-  update-apim:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Az Login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: 'Update APIM'
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.40.0
-          inlinescript: |
-            az apim api import -g ${{ env.RG_NAME }} --service-name jake-test-apim --path ${{inputs.functionName}} --api-id e842634cc9c7475cbb9f6eecc6a481b2 \
-            --specification-url "https://${{env.FUNCTIONAPP_NAME}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
+  # update-apim:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 'Az Login'
+  #       uses: azure/login@v1
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #     - name: 'Update APIM'
+  #       uses: azure/CLI@v1
+  #       with:
+  #         azcliversion: 2.40.0
+  #         inlinescript: |
+  #           az apim api import -g ${{ env.RG_NAME }} --service-name jake-test-apim --path ${{inputs.functionName}} --api-id e842634cc9c7475cbb9f6eecc6a481b2 \
+  #           --specification-url "https://${{env.FUNCTIONAPP_NAME}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson

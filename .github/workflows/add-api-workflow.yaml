@@ -28,7 +28,7 @@ jobs:
     #       az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test >> $env:GITHUB_ENV
     #       echo ${{env.PUBLISH_PROFILE}}
     
-    - name: variables
+    - name: publish-profile
       run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_ENV
           az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test >> $GITHUB_ENV
