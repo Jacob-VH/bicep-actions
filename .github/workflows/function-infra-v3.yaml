@@ -1,5 +1,5 @@
 name: FunctionInfra-V3
-
+## add CLI alternatives
 on:
   workflow_dispatch:
     inputs:
@@ -27,7 +27,7 @@ env:
 
 jobs:
   env-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest ## SNGitHubRunner-Linux
     outputs:
       publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
     steps:
@@ -59,7 +59,7 @@ jobs:
 
   app-build-and-deploy:
     needs: env-deploy
-    runs-on: windows-latest
+    runs-on: windows-latest ## SNGitHubRunner
     environment: dev
     steps:
     - name: 'Checkout GitHub Action'
@@ -83,11 +83,11 @@ jobs:
       id: fa
       with:
         app-name: ${{ env.FUNCTIONAPP_NAME }}
-        package: '${{ env.FUNCTIONAPP_PATH }}/output'
+        package: './packages/${{ inputs.functionName }}/output'
         publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   update-apim:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest ## SNGitHubRunner-Linux
     needs: app-build-and-deploy
     steps:
       - name: 'Az Login'

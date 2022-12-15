@@ -24,8 +24,8 @@ param location string
 ])
 param runtime string = 'dotnet'
 
-var functionAppName = 'func-${appName}'
-var hostingPlanName = 'ASP-${appName}'
+var functionAppName = 'func-${appName}-${env}'
+var hostingPlanName = 'ASP-${appName}-${env}'
 var storageAccountName = 'st${toLower(appName)}${env}'
 var functionWorkerRuntime = runtime
 
