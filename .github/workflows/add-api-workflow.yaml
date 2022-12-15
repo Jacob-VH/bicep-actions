@@ -9,7 +9,6 @@ permissions:
 
 env:
   AZURE_RESOURCEGROUP_NAME: apim-test
-  PUBLISH_PROFILE: string
 
 jobs:
   deploy:
