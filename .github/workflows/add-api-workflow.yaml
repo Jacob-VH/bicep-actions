@@ -21,9 +21,14 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - uses: azure/CLI@v1
-      with:
-        azcliversion: 2.40.0
-        inlinescript: |
+    # - uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.40.0
+    #     inlinescript: |
+    #       $PUBLISH_PROFILE= az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test
+    #       echo ${{env.PUBLISH_PROFILE}}
+    
+    - name: variables
+      run: |
           $PUBLISH_PROFILE= az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test
           echo ${{env.PUBLISH_PROFILE}}
