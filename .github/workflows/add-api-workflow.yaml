@@ -31,7 +31,7 @@ jobs:
     - name: variables
       run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_ENV
-          curl https://example.com >> $GITHUB_ENV
+          az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
     - name: print
