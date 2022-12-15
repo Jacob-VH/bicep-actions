@@ -30,9 +30,9 @@ jobs:
     
     - name: variables
       run: |
-          echo 'PUBLISH_PROFILE<<EOF' >> GITHUB_ENV
-          curl https://example.com >> GITHUB_ENV
-          echo 'EOF' >> GITHUB_ENV
+          echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_ENV
+          curl https://example.com >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
     - name: print
       run: echo "${{ env.PUBLISH_PROFILE }}"
