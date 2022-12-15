@@ -1,4 +1,4 @@
-name: FunctionInfra
+name: FunctionInfra-V1
 
 on:
   workflow_dispatch:

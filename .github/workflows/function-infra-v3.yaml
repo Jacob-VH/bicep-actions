@@ -106,6 +106,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           azcliversion: 2.40.0
+          ## Chage -g ${{ env.RG_NAME }}
           inlinescript: |
-            az apim api import -g ${{ env.RG_NAME }} --service-name jake-test-apim --path ${{inputs.functionName}} \
+            az apim api import -g apim-test --service-name jake-test-apim --path ${{inputs.functionName}} \
             --specification-url "https://${{env.FUNCTIONAPP_NAME}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
