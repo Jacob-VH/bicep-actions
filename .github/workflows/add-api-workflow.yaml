@@ -25,5 +25,5 @@ jobs:
       with:
         azcliversion: 2.40.0
         inlinescript: |
-          ${{env.PUBLISH_PROFILE}}=az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test
+          ${{env.PUBLISH_PROFILE}}= az functionapp deployment list-publishing-profiles --name function-with-swagger20221101164153 --resource-group apim-test
           echo ${{env.PUBLISH_PROFILE}}
