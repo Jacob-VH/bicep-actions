@@ -103,7 +103,7 @@ jobs:
       id: fa
       with:
         app-name: ${{ needs.env-deploy.outputs.app-name }}
-        package: './packages/${{ inputs.functionName }}/output'
+        package: './packages/${{ needs.env-deploy.outputs.app-name }}/output'
         publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   update-apim:
