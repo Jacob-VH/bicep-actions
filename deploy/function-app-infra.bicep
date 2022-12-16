@@ -1,8 +1,7 @@
 targetScope = 'subscription'
 
 param location string = 'westus'
-param functionName string
-param appName string = replace(functionName, '.', '')
+param appName string
 param env string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -11,7 +10,7 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 module functionApp 'function.bicep' = {
-  name: functionName
+  name: appName
   scope: resourceGroup
   params: {
     appName: appName

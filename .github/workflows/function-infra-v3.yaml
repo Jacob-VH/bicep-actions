@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest ## SNGitHubRunner-Linux
     outputs:
       publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
+      app-name: ${{steps.app-name.outputs.APP_NAME}}
     steps:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
@@ -40,6 +41,13 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Strip Function Name'
+        id: app-name
+        run: |
+          echo 'APP_NAME<<APP' >> $GITHUB_OUTPUT
+          echo ${{inputs.functionName}} | sed s/[.]//g >> $GITHUB_OUTPUT
+          echo 'APP' >> $GITHUB_OUTPUT
           
       - name: 'Deploy Infra'
         uses: azure/arm-deploy@v1
@@ -48,13 +56,13 @@ jobs:
           scope: subscription
           region: westus
           template: ./deploy/function-app-infra.bicep
-          parameters: functionName=${{inputs.functionName}} env=${{inputs.env}}
+          parameters: functionName=${{env.APP_NAME}} env=${{inputs.env}}
 
       - name: publish-profile
         id: publish-profile
         run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_OUTPUT
-          az functionapp deployment list-publishing-profiles --name ${{ env.FUNCTIONAPP_NAME }} --resource-group ${{ env.RG_NAME }} --xml >> $GITHUB_OUTPUT
+          az functionapp deployment list-publishing-profiles --name ${{ env.APP_NAME }} --resource-group ${{ env.RG_NAME }} --xml >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   app-build-and-deploy:
@@ -82,13 +90,13 @@ jobs:
       uses: Azure/functions-action@v1
       id: fa
       with:
-        app-name: ${{ env.FUNCTIONAPP_NAME }}
+        app-name: ${{ needs.env-deploy.outputs.app-name }}
         package: './packages/${{ inputs.functionName }}/output'
         publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   update-apim:
     runs-on: ubuntu-latest ## SNGitHubRunner-Linux
-    needs: app-build-and-deploy
+    needs: [env-deploy, app-build-and-deploy]
     steps:
       - name: 'Az Login'
         uses: azure/login@v1
@@ -96,11 +104,16 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: 'Strip Function Name'
+        run: |
+          APP_NAME=$(echo ${{inputs.functionName}} | sed s/[.]//g)
+      
       - name: 'Update APIM'
         uses: azure/CLI@v1
         with:
           azcliversion: 2.40.0
           ## Chage -g ${{ env.RG_NAME }}
           inlinescript: |
-            az apim api import -g apim-test --service-name jake-test-apim --path ${{inputs.functionName}} --display-name ${{inputs.functionName}} \
-            --specification-url "https://${{env.FUNCTIONAPP_NAME}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
+            az apim api import -g apim-test --service-name jake-test-apim --path ${{needs.env-deploy.outputs.app-name}} --display-name ${{needs.env-deploy.outputs.app-name}} \
+            --specification-url "https://${{needs.env-deploy.outputs.app-name}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
