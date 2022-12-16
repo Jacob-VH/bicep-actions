@@ -56,7 +56,7 @@ jobs:
           scope: subscription
           region: westus
           template: ./deploy/function-app-infra.bicep
-          parameters: functionName=${{env.APP_NAME}} env=${{inputs.env}}
+          parameters: appName=${{env.APP_NAME}} env=${{inputs.env}}
 
       - name: publish-profile
         id: publish-profile
