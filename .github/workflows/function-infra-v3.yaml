@@ -74,7 +74,7 @@ jobs:
         id: publish-profile
         run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_OUTPUT
-          az functionapp deployment list-publishing-profiles --name ${{ steps.sf-name.outputs.SF_NAME }} --resource-group ${{ steps.sf-name.outputs.RG_NAME }} --xml >> $GITHUB_OUTPUT
+          az functionapp deployment list-publishing-profiles --name ${{ steps.sf-name.outputs.SF_NAME }} --resource-group ${{ steps.rg-name.outputs.RG_NAME }} --xml >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   app-build-and-deploy:
