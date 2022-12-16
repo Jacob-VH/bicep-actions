@@ -20,10 +20,8 @@ permissions:
   contents: read
 
 env:
-  FUNCTIONAPP_NAME: func-${{ inputs.functionName }}
   FUNCTIONAPP_PATH: './apis' ##Change this to ./${{inputs.functionName}}
   DOTNET_VERSION: '6.0.x'
-  RG_NAME: rg-${{ inputs.functionName }}-cus
 
 jobs:
   env-deploy:
@@ -43,12 +41,26 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 'Strip Function Name'
+        id: sf-name
+        run: |
+          echo 'SF_NAME<<SF' >> $GITHUB_OUTPUT
+          echo ${{inputs.functionName}} | sed s/[.]//g >> $GITHUB_OUTPUT
+          echo 'SF' >> $GITHUB_OUTPUT
+
+      - name: 'Set App Name'
         id: app-name
         run: |
           echo 'APP_NAME<<APP' >> $GITHUB_OUTPUT
-          echo ${{inputs.functionName}} | sed s/[.]//g >> $GITHUB_OUTPUT
+          echo 'func-'${{inputs.functionName}} | sed s/[.]//g >> $GITHUB_OUTPUT
           echo 'APP' >> $GITHUB_OUTPUT
           
+      - name: 'Set RG Name'
+        id: rg-name
+        run: |
+          echo 'RG_NAME<<RG' >> $GITHUB_OUTPUT
+          echo 'rg-'${{inputs.functionName}}'-cus' | sed s/[.]//g >> $GITHUB_OUTPUT
+          echo 'RG' >> $GITHUB_OUTPUT
+
       - name: 'Deploy Infra'
         uses: azure/arm-deploy@v1
         with:
@@ -56,13 +68,13 @@ jobs:
           scope: subscription
           region: westus
           template: ./deploy/function-app-infra.bicep
-          parameters: appName=${{env.APP_NAME}} env=${{inputs.env}}
+          parameters: appName=${{steps.sf-name.outputs.SF_NAME}} env=${{inputs.env}}
 
       - name: publish-profile
         id: publish-profile
         run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_OUTPUT
-          az functionapp deployment list-publishing-profiles --name ${{ env.APP_NAME }} --resource-group ${{ env.RG_NAME }} --xml >> $GITHUB_OUTPUT
+          az functionapp deployment list-publishing-profiles --name ${{ steps.sf-name.outputs.SF_NAME }} --resource-group ${{ steps.sf-name.outputs.RG_NAME }} --xml >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   app-build-and-deploy:
