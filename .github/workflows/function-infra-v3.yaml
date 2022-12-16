@@ -29,6 +29,7 @@ jobs:
     outputs:
       publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
       app-name: ${{steps.app-name.outputs.APP_NAME}}
+      sf-name: ${{steps.sf-name.outputs.SF_NAME}}
     steps:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
@@ -103,7 +104,7 @@ jobs:
       id: fa
       with:
         app-name: ${{ needs.env-deploy.outputs.app-name }}
-        package: './packages/${{ needs.sf-deploy.outputs.sf-name }}/output'
+        package: './packages/${{ needs.env-deploy.outputs.sf-name }}/output'
         publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   update-apim:
