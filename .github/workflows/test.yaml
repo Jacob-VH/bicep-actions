@@ -21,5 +21,5 @@ jobs:
     steps:
       - name: variables
         run: |
-          resourceGroup=$(echo ${{inputs.functionName}} | sed s/[.]//g)
+          resourceGroup=$(echo ${{inputs.function-name}} | sed s/[.]//g)
           echo $resourceGroup
