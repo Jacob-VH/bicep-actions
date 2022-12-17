@@ -1,5 +1,5 @@
 name: FunctionInfra-V3
-## add CLI alternatives
+## add CLI alternatives.
 on:
   workflow_dispatch:
     inputs:
