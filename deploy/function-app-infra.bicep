@@ -3,6 +3,7 @@ targetScope = 'subscription'
 param location string = 'westus'
 param appName string
 param env string
+param tenantId string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${appName}-cus'
@@ -16,5 +17,6 @@ module functionApp 'function.bicep' = {
     appName: appName
     env: env
     location: location
+    tenantId: tenantId
   }
 }

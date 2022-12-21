@@ -30,6 +30,7 @@ jobs:
       publish-profile: ${{ steps.publish-profile.outputs.PUBLISH_PROFILE }}
       app-name: ${{steps.app-name.outputs.APP_NAME}}
       sf-name: ${{steps.sf-name.outputs.SF_NAME}}
+      app-oid: ${{steps.app-oid.outputs.APP_OID}}
     steps:
       - name: 'Checkout GitHub'
         uses: actions/checkout@v3
@@ -62,6 +63,13 @@ jobs:
           echo 'rg-'${{inputs.functionName}}'-cus' | sed s/[.]//g >> $GITHUB_OUTPUT
           echo 'RG' >> $GITHUB_OUTPUT
 
+      - name: 'Set KV Name'
+        id: kv-name
+        run: |
+          echo 'KV_NAME<<KV' >> $GITHUB_OUTPUT
+          echo 'kv-'${{inputs.functionName}} | sed s/[.]//g >> $GITHUB_OUTPUT
+          echo 'KV' >> $GITHUB_OUTPUT
+
       - name: 'Deploy Infra'
         uses: azure/arm-deploy@v1
         with:
@@ -69,43 +77,56 @@ jobs:
           scope: subscription
           region: westus
           template: ./deploy/function-app-infra.bicep
-          parameters: appName=${{steps.sf-name.outputs.SF_NAME}} env=${{inputs.env}}
+          parameters: appName=${{steps.sf-name.outputs.SF_NAME}} env=${{inputs.env}} tenantId=${{ secrets.AZURE_TENANT_ID }}
 
-      - name: publish-profile
+      - name: 'Get Publish Profile'
         id: publish-profile
         run: |
           echo 'PUBLISH_PROFILE<<EOF' >> $GITHUB_OUTPUT
           az functionapp deployment list-publishing-profiles --name ${{ steps.app-name.outputs.APP_NAME }} --resource-group ${{ steps.rg-name.outputs.RG_NAME }} --xml >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
-  app-build-and-deploy:
-    needs: env-deploy
-    runs-on: windows-latest ## SNGitHubRunner
-    environment: dev
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v3
+      - name: 'Get App Object ID'
+        id: app-oid
+        run: |
+          echo 'APP_OID<<OID' >> $GITHUB_OUTPUT
+          az functionapp show --name ${{ steps.app-name.outputs.APP_NAME }} --resource-group ${{ steps.rg-name.outputs.RG_NAME }} --query principalId >> $GITHUB_OUTPUT
+          echo 'OID' >> $GITHUB_OUTPUT
 
-    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: 'Update KeyVault'
+        run: |
+          az keyvault set-policy --name ${{ steps.kv-name.outputs.KV_NAME }} --object-id ${{ steps.app-oid.outputs.APP_OID }} --secret-permissions {get, list} --key-permissions {get, list}
 
-    - name: 'Resolve Project Dependencies Using Dotnet'
-      shell: pwsh
-      run: |
-        pushd './${{ env.FUNCTIONAPP_PATH }}'
-        dotnet build --configuration Release --output ./output
-        popd
+          
+
+  # app-build-and-deploy:
+  #   needs: env-deploy
+  #   runs-on: windows-latest ## SNGitHubRunner
+  #   environment: dev
+  #   steps:
+  #   - name: 'Checkout GitHub Action'
+  #     uses: actions/checkout@v3
+
+  #   - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+  #     uses: actions/setup-dotnet@v3
+  #     with:
+  #       dotnet-version: ${{ env.DOTNET_VERSION }}
+
+  #   - name: 'Resolve Project Dependencies Using Dotnet'
+  #     shell: pwsh
+  #     run: |
+  #       pushd './${{ env.FUNCTIONAPP_PATH }}'
+  #       dotnet build --configuration Release --output ./output
+  #       popd
 
 
-    - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1
-      id: fa
-      with:
-        app-name: ${{ needs.env-deploy.outputs.app-name }}
-        package: './apis/output' ## ${{inputs.functionName}}
-        publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
+  #   - name: 'Run Azure Functions Action'
+  #     uses: Azure/functions-action@v1
+  #     id: fa
+  #     with:
+  #       app-name: ${{ needs.env-deploy.outputs.app-name }}
+  #       package: './apis/output' ## ${{inputs.functionName}}
+  #       publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
   # update-apim:
   #   runs-on: ubuntu-latest ## SNGitHubRunner-Linux
@@ -118,11 +139,11 @@ jobs:
   #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
   #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       
-      - name: 'Update APIM'
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.40.0
-          ## Chage -g ${{ env.RG_NAME }}
-          inlinescript: |
-            az apim api import -g apim-test --service-name jake-test-apim --path ${{needs.env-deploy.outputs.app-name}} --display-name ${{needs.env-deploy.outputs.app-name}} \
-            --specification-url "https://${{needs.env-deploy.outputs.app-name}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson
+  #     - name: 'Update APIM'
+  #       uses: azure/CLI@v1
+  #       with:
+  #         azcliversion: 2.40.0
+  #         ## Chage -g ${{ env.RG_NAME }}
+  #         inlinescript: |
+  #           az apim api import -g apim-test --service-name jake-test-apim --path ${{needs.env-deploy.outputs.app-name}} --display-name ${{needs.env-deploy.outputs.app-name}} \
+  #           --specification-url "https://${{needs.env-deploy.outputs.app-name}}.azurewebsites.net/api/swagger.json" --specification-format OpenApiJson

@@ -4,6 +4,9 @@ param appName string
 @description('Environment being deployed to.')
 param env string
 
+@description('Tenant ID')
+param tenantId string
+
 @description('Storage Account type')
 @allowed([
   'Standard_LRS'
@@ -26,6 +29,7 @@ param runtime string = 'dotnet'
 var functionAppName = 'func-${appName}'
 var hostingPlanName = 'ASP-${appName}'
 var storageAccountName = 'st${toLower(appName)}${env}'
+var keyvaultName = 'kv-${appName}'
 var functionWorkerRuntime = runtime
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
@@ -87,5 +91,22 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
       minTlsVersion: '1.2'
     }
     httpsOnly: true
+  }
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
+  name: keyvaultName
+  location: location
+  properties: {
+    enabledForDeployment: false
+    enabledForTemplateDeployment: true
+    enabledForDiskEncryption: false
+    tenantId: tenantId
+    accessPolicies: [
+    ]
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
   }
 }
