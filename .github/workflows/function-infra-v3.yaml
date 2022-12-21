@@ -107,16 +107,16 @@ jobs:
         package: './apis/output' ## ${{inputs.functionName}}
         publish-profile: ${{ needs.env-deploy.outputs.publish-profile }}
 
-  update-apim:
-    runs-on: ubuntu-latest ## SNGitHubRunner-Linux
-    needs: [env-deploy, app-build-and-deploy]
-    steps:
-      - name: 'Az Login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  # update-apim:
+  #   runs-on: ubuntu-latest ## SNGitHubRunner-Linux
+  #   needs: [env-deploy, app-build-and-deploy]
+  #   steps:
+  #     - name: 'Az Login'
+  #       uses: azure/login@v1
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       
       - name: 'Update APIM'
         uses: azure/CLI@v1
