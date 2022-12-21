@@ -90,7 +90,7 @@ jobs:
         id: app-oid
         run: |
           echo 'APP_OID<<OID' >> $GITHUB_OUTPUT
-          az functionapp show --name ${{ steps.app-name.outputs.APP_NAME }} --resource-group ${{ steps.rg-name.outputs.RG_NAME }} --query principalId >> $GITHUB_OUTPUT
+          az functionapp identity show --name ${{ steps.app-name.outputs.APP_NAME }} --resource-group ${{ steps.rg-name.outputs.RG_NAME }} --query principalId >> $GITHUB_OUTPUT
           echo 'OID' >> $GITHUB_OUTPUT
 
       - name: 'Update KeyVault'
