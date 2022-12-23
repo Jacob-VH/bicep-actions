@@ -1,8 +1,24 @@
+name: 'Delete function'
+
 on:
   workflow_dispatch:
-env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'SN.System.Org.IS.DevOps.Ticketing.Functions' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
+    inputs:
+      functionName:
+        description: 'name of function'
+        default: 'functionName'
+        required: true
+        type: string
+
+      env:
+        description: 'Target environment'
+        default: 'sandbox'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   check-and-delete:
     runs-on: ubuntu-latest
@@ -10,21 +26,26 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
       
-      - name: 'azure login'
+      - name: 'Az Login'
         uses: azure/login@v1
         with:
-          creds: ${{secrets.AZURE_CREDENTIALS}}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       
-      - name: 'resource group list'
-        uses: azure/CLI
-        with:
-          azcliversion: 2.40.0
-          inlineScript: az group list
+      - name: 'Generate RG_NAME'
+        run: |
+          echo 'RG_NAME<<RG' >> $GITHUB_ENV
+          echo 'rg-'${{ inputs.functionName }}'-cus' | sed s/[.]//g >> $GITHUB_ENV
+          echo 'RG' >> $GITHUB_ENV
+
+      - name: 'Set RG flag'
+        run: |
+          echo 'RG_FLAG<<RGF' >> $GITHUB_ENV
+          az group exists -n ${{ env.RG_NAME }} >> $GITHUB_ENV
+          echo 'RGF' >> $GITHUB_ENV
       
-      - name: 'check and delete'
-        uses: if [ $(az group exists --name $RESOURCEGROUPNAME) = true ]; then
-                  az group delete --name $RESOURCEGROUPNAME --location $LOCATION
-              fi
-      
-      - name: 'resource group list'
-        uses: az group list
+      - name: 'Check for Resource Group'
+        run: |
+          echo ${{env.RG_NAME}}
+          echo ${{env.RG_FLAG}}
