@@ -49,3 +49,7 @@ jobs:
         run: |
           echo ${{env.RG_NAME}}
           echo ${{env.RG_FLAG}}
+
+      - name: 'Echo if true'
+        if: ${{env.RG_FLAG}} == true
+        run: echo 'It worked'
