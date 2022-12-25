@@ -39,32 +39,29 @@ jobs:
           echo 'rg-'${{ inputs.functionName }}'-cus' | sed s/[.]//g >> $GITHUB_ENV
           echo 'RG' >> $GITHUB_ENV
 
+      ## Sets an env variable to 'true' if the named RG exists in Azure, 'false' if it does not.
       - name: 'Set RG flag'
         run: |
           echo 'RG_FLAG<<RGF' >> $GITHUB_ENV
           az group exists -n ${{ env.RG_NAME }} >> $GITHUB_ENV
           echo 'RGF' >> $GITHUB_ENV
-      
-      - name: '**TESTING ECHO**' ## Remove this
-        run: |
-          echo ${{env.RG_NAME}}
-          echo ${{env.RG_FLAG}}
 
-      - name: 'Delete RG' ## Deletes the RG and all child resources
+       ## Deletes the RG and all child resources
+      - name: 'Delete RG'
         if: ${{env.RG_FLAG == 'true'}}
         run: az group delete -n ${{env.RG_NAME}} --no-wait --yes
 
       # - name: 'Remove API from APIM' ## Removes API deffinition from APIM
       #   if: ${{env.RG_FLAG == 'true'}}
-      #   run: |
+      #   run: az apim api delete --api-id {API-Identifier} -g {apim-rg} -n {apim-name} --no-wait --yes
 
-
-      - name: 'Remove PP secret' ## Removes the Publish Profile Secret from GitHub
+      ## Removes the Publish Profile Secret from GitHub. Needs Personal Access token with repository perms.
+      - name: 'Remove PP secret' 
         if: ${{env.RG_FLAG == 'true'}}
         run: |
           curl \
             -X DELETE \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{secrets.PA_SECRET}}"\
+            -H "Authorization: Bearer ${{secrets.PA_SECRET}}"\ 
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/Jacob-VH/bicep-actions/actions/secrets/TEST
