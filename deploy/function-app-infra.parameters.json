@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "value": "jdvhrockliberty"
+    },
+    "env": {
+      "value": "sandbox"
+    },
+    "tenantId": {
+      "value": "00098f71-c17b-41dd-b5f1-3dc4856c110f"
+    }
+  }
+}

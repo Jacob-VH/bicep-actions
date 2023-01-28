@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile profileName="func-jdvhrockliberty - Web Deploy" publishMethod="MSDeploy" publishUrl="func-jdvhrockliberty.scm.azurewebsites.net:443" msdeploySite="func-jdvhrockliberty" userName="$func-jdvhrockliberty" userPWD="KyJRhuTix3N6Y2B3odlx50Pilms0dJA7q01kstcATJC9a1LbsQslvXK3TEWu" destinationAppUrl="https://func-jdvhrockliberty.azurewebsites.net" SQLServerDBConnectionString="" mySQLDBConnectionString="" hostingProviderForumLink="" controlPanelLink="http://windows.azure.com" webSystem="WebSites">
+    <databases />
+  </publishProfile>
+  <publishProfile profileName="func-jdvhrockliberty - FTP" publishMethod="FTP" publishUrl="ftps://waws-prod-bay-163.ftp.azurewebsites.windows.net/site/wwwroot" ftpPassiveMode="True" userName="func-jdvhrockliberty\$func-jdvhrockliberty" userPWD="KyJRhuTix3N6Y2B3odlx50Pilms0dJA7q01kstcATJC9a1LbsQslvXK3TEWu" destinationAppUrl="https://func-jdvhrockliberty.azurewebsites.net" SQLServerDBConnectionString="" mySQLDBConnectionString="" hostingProviderForumLink="" controlPanelLink="http://windows.azure.com" webSystem="WebSites">
+    <databases />
+  </publishProfile>
+  <publishProfile profileName="func-jdvhrockliberty - Zip Deploy" publishMethod="ZipDeploy" publishUrl="func-jdvhrockliberty.scm.azurewebsites.net:443" userName="$func-jdvhrockliberty" userPWD="KyJRhuTix3N6Y2B3odlx50Pilms0dJA7q01kstcATJC9a1LbsQslvXK3TEWu" destinationAppUrl="https://func-jdvhrockliberty.azurewebsites.net" SQLServerDBConnectionString="" mySQLDBConnectionString="" hostingProviderForumLink="" controlPanelLink="http://windows.azure.com" webSystem="WebSites">
+    <databases />
+  </publishProfile>
+</publishData>
